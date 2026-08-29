@@ -1,0 +1,15 @@
+{
+  "name": "percy",
+  "version": "1.0.0",
+  "description": "- Fine tune a coding language model to be personalised",
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "dataset-generator.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "dotenv": "^17.4.2"
+  }
+}

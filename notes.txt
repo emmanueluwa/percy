@@ -1,0 +1,51 @@
+Fine-tuning 
+
+- We have model that has a specific purpose, trained on a dataset
+from the dataset we get a distributed table of probabilities.
+
+- When language models like chatgpt are trained, they look at a ton of text
+and create embeddings for each text(token) which maps to a field of values
+that approximate the given text(token) in relation to other words and in relation
+to greater context. The context window can be changed eg the range of text we are 
+looking at which in result can affect the value of each word.
+
+- In general gpt is a decoder, it is continuously generating tokens based on previous
+tokens, the tokens matter a lot and new tokens create new fields of probability.
+
+- Generalised models like gpt can be fine-tuned and trained for a specific purpose.
+
+
+Rank decomposition(rank factorisation)
+
+- a way of breaking down a complex matrix into two smaller, simpler matrices that contain
+the exact same information.
+- for example, a giant matrix 100 x 100 with 10,000 elements. Within the 10,000 elements
+a lot of data may be redundant. The RANK of a matrix tells us how much unique information is 
+actually in it. For example if the rank of the 100 by 100 matrix is 2...
+
+    through rank decomposition we can rewrite the 100 by 100 matrix by multiplying a 100 by 2
+    matrix and a 2 by 100 matrix
+
+    instead of dealing with 10,000 elements we would only need to deal with 400(200 + 200)
+
+    the data has been compressed perfectly without losing a single bit of information.
+
+- Why this is useful?
+
+    this allows computers to store massive datasets using a fraction of the memory
+
+    it is faster for a computer to work 2 smaller matrices than one giant matrix
+
+    makes it easier to separate true unique data from data that has been repeated
+
+    when we fine-tune an LLM we are calculating a matrix of updates or changes(eg change in weights)
+    to the model's original knowledge
+        - weight is the numerical value that controls how much influence an input has on the model's 
+        output
+        when an llm learns it fine-tunes billions of weights until it gets the answers right 
+
+        - a reduction in the number of parameters updated as a result in breaking down the matrix
+        means single consumer graphics cards can be used to fine-tune instead of a server cluster 
+        costing millions of dollars
+
+          
