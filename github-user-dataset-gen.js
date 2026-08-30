@@ -48,6 +48,31 @@ async function getRepoReadme() {
   return [];
 }
 
+async function getFileData() {
+  const response = await fetch(
+    "https://api.github.com/repos/emmanueluwa/ragion/contents/app.py",
+    {
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${GITHUB_TOKEN}`,
+        "X-GitHub-Api-Version": "2026-03-10",
+      },
+    },
+  );
+
+  const fileContent = await response.json();
+
+  const fileName = fileContent.name;
+  console.log(fileName);
+
+  const decodedString = Buffer.from(fileContent.content, "base64").toString(
+    "utf-8",
+  );
+  console.log(decodedString);
+
+  return [];
+}
+
 async function getAllRepoFiles() {
   const response = await fetch(
     "https://api.github.com/repos/emmanueluwa/ragion/contents/README.md",
@@ -85,7 +110,9 @@ async function run() {
       TITLE: repo.description,
     };
 
-    const readmeData = await getRepoReadme();
+    // const readmeData = await getRepoReadme();
+    const content = await getFileData();
+
     // const files = await getAllRepoFiles();
     // for (let file in files) {
     //   break;
