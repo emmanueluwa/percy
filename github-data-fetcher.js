@@ -10,8 +10,21 @@ per repository we need
 
 require("dotenv").config();
 
+const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+
 async function run() {
-  const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
+  const response = await fetch("https://api.github.com/user/repos", {
+    headers: {
+      Accept: "application/vnd.github+json",
+      Authorization: `Bearer ${GITHUB_TOKEN}`,
+      "X-GitHub-Api-Version": "2026-03-10",
+    },
+  });
+
+  const repoData = await response.json();
+
+  console.log(repoData);
+
   process.exit(0);
 }
 

@@ -49,3 +49,7 @@ actually in it. For example if the rank of the 100 by 100 matrix is 2...
         costing millions of dollars
 
           
+
+HTTP Headers
+- On every request that happens with http there is metadata associated with that request, 
+which are http headers
