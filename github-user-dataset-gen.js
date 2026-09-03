@@ -20,7 +20,16 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
   "CODE": <string>
 }
 */
-const chosenRepos = ["jobe", "ragion", "lead-scraper", "pet_friendly_scraper"];
+
+const sleep = (milliseconds) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, milliseconds);
+  });
+};
+
+const chosenRepos = ["ragion", "jobe", "lead-scraper", "pet_friendly_scraper"];
 
 async function getRepoReadme(repoName) {
   const response = await fetch(
@@ -44,9 +53,9 @@ async function getRepoReadme(repoName) {
   return [];
 }
 
-async function getFileData(repoName, fileName) {
+async function getFileData(repo, fileName) {
   const response = await fetch(
-    `https://api.github.com/repos/emmanueluwa/${repoName}/contents/${fileName}`,
+    `https://api.github.com/repos/emmanueluwa/${repo}/contents/${fileName}`,
     {
       headers: {
         Accept: "application/vnd.github+json",
@@ -59,14 +68,13 @@ async function getFileData(repoName, fileName) {
   const fileContent = await response.json();
 
   const fileCode = Buffer.from(fileContent.content, "base64").toString("utf-8");
-  console.log(fileCode);
 
-  return [];
+  return fileCode;
 }
 
-async function getAllRepoFiles() {
+async function getAllRepoFiles(repo) {
   const response = await fetch(
-    "https://api.github.com/repos/emmanueluwa/ragion/git/trees/main?recursive=1",
+    `https://api.github.com/repos/emmanueluwa/${repo}/git/trees/main?recursive=1`,
     {
       headers: {
         Accept: "application/vnd.github+json",
@@ -91,24 +99,27 @@ for EACH repo i need to get ALL the files
 */
 
 async function run() {
-  // const response = await fetch(
-  //   "https://api.github.com/user/repos?per_page=100&page=2",
-  //   {
-  //     headers: {
-  //       Accept: "application/vnd.github+json",
-  //       Authorization: `Bearer ${GITHUB_TOKEN}`,
-  //       "X-GitHub-Api-Version": "2026-03-10",
-  //     },
-  //   },
-  // );
-  // const repoData = await response.json();
-
   const dataset = [];
 
-  const repoFiles = await getAllRepoFiles();
+  for (let i in chosenRepos) {
+    const repoFiles = await getAllRepoFiles(chosenRepos[i]);
+    for (let file of repoFiles.tree) {
+      if (
+        file.path.startsWith(".") ||
+        file.path.includes("__") ||
+        !file.path.includes(".") ||
+        file.path == "Dockerfile" ||
+        file.path == "README.md"
+      ) {
+        continue;
+      } else {
+        const fileData = await getFileData(chosenRepos[i], file.path);
 
-  for (let file of repoFiles.tree) {
-    console.log(file.path);
+        console.log(fileData);
+        sleep(7000);
+      }
+    }
+    break;
   }
 
   process.exit(0);
