@@ -12,12 +12,6 @@ require("dotenv").config();
 
 const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
 
-// curl -L \
-//   -H "Accept: application/vnd.github.object" \
-//   -H "Authorization: Bearer <YOUR-TOKEN>" \
-//   -H "X-GitHub-Api-Version: 2026-03-10" \
-//   https://api.github.com/repos/OWNER/REPO/contents/PATH
-
 /*
 {
   "TITLE": <string>,
@@ -26,9 +20,11 @@ const GITHUB_TOKEN = process.env.GITHUB_TOKEN;
   "CODE": <string>
 }
 */
-async function getRepoReadme() {
+const chosenRepos = ["jobe", "ragion", "lead-scraper", "pet_friendly_scraper"];
+
+async function getRepoReadme(repoName) {
   const response = await fetch(
-    "https://api.github.com/repos/emmanueluwa/ragion/readme",
+    `https://api.github.com/repos/emmanueluwa/${repoName}/readme`,
     {
       headers: {
         Accept: "application/vnd.github+json",
@@ -48,9 +44,9 @@ async function getRepoReadme() {
   return [];
 }
 
-async function getFileData() {
+async function getFileData(repoName, fileName) {
   const response = await fetch(
-    "https://api.github.com/repos/emmanueluwa/ragion/contents/app.py",
+    `https://api.github.com/repos/emmanueluwa/${repoName}/contents/${fileName}`,
     {
       headers: {
         Accept: "application/vnd.github+json",
@@ -62,20 +58,15 @@ async function getFileData() {
 
   const fileContent = await response.json();
 
-  const fileName = fileContent.name;
-  console.log(fileName);
-
-  const decodedString = Buffer.from(fileContent.content, "base64").toString(
-    "utf-8",
-  );
-  console.log(decodedString);
+  const fileCode = Buffer.from(fileContent.content, "base64").toString("utf-8");
+  console.log(fileCode);
 
   return [];
 }
 
 async function getAllRepoFiles() {
   const response = await fetch(
-    "https://api.github.com/repos/emmanueluwa/ragion/contents/README.md",
+    "https://api.github.com/repos/emmanueluwa/ragion/git/trees/main?recursive=1",
     {
       headers: {
         Accept: "application/vnd.github+json",
@@ -87,38 +78,37 @@ async function getAllRepoFiles() {
 
   const fileData = await response.json();
 
-  console.log(fileData);
-
-  return [];
+  return fileData;
 }
 
+/*
+What am i trying to do?
+
+I need to get the repos based on the chosen repos array
+
+for EACH repo i need to get ALL the files
+
+*/
+
 async function run() {
-  const response = await fetch("https://api.github.com/user/repos", {
-    headers: {
-      Accept: "application/vnd.github+json",
-      Authorization: `Bearer ${GITHUB_TOKEN}`,
-      "X-GitHub-Api-Version": "2026-03-10",
-    },
-  });
+  // const response = await fetch(
+  //   "https://api.github.com/user/repos?per_page=100&page=2",
+  //   {
+  //     headers: {
+  //       Accept: "application/vnd.github+json",
+  //       Authorization: `Bearer ${GITHUB_TOKEN}`,
+  //       "X-GitHub-Api-Version": "2026-03-10",
+  //     },
+  //   },
+  // );
+  // const repoData = await response.json();
 
   const dataset = [];
 
-  const repoData = await response.json();
+  const repoFiles = await getAllRepoFiles();
 
-  for (let repo of repoData) {
-    const datasetItem = {
-      TITLE: repo.description,
-    };
-
-    // const readmeData = await getRepoReadme();
-    const content = await getFileData();
-
-    // const files = await getAllRepoFiles();
-    // for (let file in files) {
-    //   break;
-    // }
-
-    break;
+  for (let file of repoFiles.tree) {
+    console.log(file.path);
   }
 
   process.exit(0);
